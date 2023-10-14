@@ -2,6 +2,9 @@ const { Client, Events, LocalAuth } = require('whatsapp-web.js');
 const qrcode = require("qrcode");
 const { sendMessageToCody, fetchConversationsForBot, createConversation } = require('./api.js');
 const { BOT_ID } = require('./config.js');
+const PDFDocument = require('pdfkit');
+const fs = require('fs');
+
 
 function initializeWhatsAppClient() {
     const client = new Client({
@@ -9,8 +12,10 @@ function initializeWhatsAppClient() {
         authStrategy: new LocalAuth({ dataPath: "./" })
     });
 
-    client.on('qr', (qr) => {
+    client.on('qr', async (qr) => {
         console.log('QR received.');
+    
+        // Generate the QR Code in the terminal as you did before
         qrcode.toString(qr, {
             type: "terminal",
             small: true,
@@ -24,8 +29,24 @@ function initializeWhatsAppClient() {
             console.log(url);
             console.log("Scan the QR code above to login to Whatsapp Web...");
         });
+    
+        // Generate QR Code as Data URL
+        const qrSvg = await qrcode.toDataURL(qr);
+    
+        // Initialize PDF Document
+        const doc = new PDFDocument;
+    
+        // Pipe the PDF into a .pdf file
+        doc.pipe(fs.createWriteStream('QRCode.pdf'));
+    
+        // Add the QR Code image into the PDF
+        doc.image(qrSvg, {fit: [250, 250]});
+    
+        // Finalize PDF file
+        doc.end();
+    
+        console.log("QR Code has also been written to QRCode.pdf");
     });
-
 
    /* client.on(Events.MESSAGE_RECEIVED, async msg => {
         console.log('Message received event triggered.');

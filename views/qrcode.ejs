@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp QR Code</title>
+</head>
+<body>
+    <h2>Scan the QR Code below:</h2>
+    <img id="qrImg" src="<%= qrDataUrl %>" alt="WhatsApp QR Code">
+
+    <script>
+        function fetchUpdatedQRCode() {
+            fetch('/latestQRDataUrl')
+            .then(response => response.json())
+            .then(data => {
+                const qrImg = document.getElementById('qrImg');
+                if (data.status === "ready" && qrImg.src !== data.dataUrl) {
+                    qrImg.src = data.dataUrl;
+                } 
+                // else condition for "not_ready" state is optional 
+                // as it's taken care of by the initial src provided by the ejs template.
+            })
+            .catch(error => {
+                console.error('Error fetching updated QR code:', error);
+            });
+        }
+
+        // Set an interval
+        setInterval(fetchUpdatedQRCode, 15000);  // Adjust the timing as needed
+    </script>
+</body>
+</html>

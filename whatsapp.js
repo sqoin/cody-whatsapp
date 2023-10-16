@@ -7,9 +7,11 @@ const fs = require('fs');
 const express = require('express');
 const app = express();
 const path = require('path');
+let latestQRDataUrl = null;
 
 
-
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
 
 function initializeWhatsAppClient() {
     const client = new Client({
@@ -35,9 +37,13 @@ function initializeWhatsAppClient() {
             console.log("Scan the QR code above to login to Whatsapp Web...");
         });
     
+
+ 
+
         // Generate QR Code as Data URL
         const qrSvg = await qrcode.toDataURL(qr);
-    
+        latestQRDataUrl = qrSvg;  // Set the data URL
+
         // Initialize PDF Document
         const doc = new PDFDocument;
     
@@ -142,22 +148,23 @@ client.on(Events.MESSAGE_RECEIVED, async msg => {
 }
 
 
-app.get('/getQRCode', (req, res) => {
-    // Set the path to your QRCode.pdf
-    const filePath = path.join(__dirname, 'QRCode.pdf');
-
-    // Check if file exists (you can use the fs module)
-    fs.access(filePath, fs.constants.F_OK, (err) => {
-        if (err) {
-            return res.status(404).send('QRCode not generated yet.');
-        }
-
-        // Set headers and download
-        res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', 'inline; filename=QRCode.pdf');
-        return res.download(filePath);
-    });
+// Route to display QR code page
+app.get('/displayQRCode', (req, res) => {
+    if (!latestQRDataUrl) {
+        return res.send("QR code hasn't been generated yet.");
+    }
+    res.render('qrcode', { qrDataUrl: latestQRDataUrl });
 });
+
+
+app.get('/latestQRDataUrl', (req, res) => {
+    if (!latestQRDataUrl) {
+        return res.status(200).json({ status: "not_ready" });
+    }
+    res.json({ status: "ready", dataUrl: latestQRDataUrl });
+});
+
+
 
 const PORT = 3004;
 app.listen(PORT, () => {

@@ -4,6 +4,11 @@ const { sendMessageToCody, fetchConversationsForBot, createConversation } = requ
 const { BOT_ID } = require('./config.js');
 const PDFDocument = require('pdfkit');
 const fs = require('fs');
+const express = require('express');
+const app = express();
+const path = require('path');
+
+
 
 
 function initializeWhatsAppClient() {
@@ -135,6 +140,30 @@ client.on(Events.MESSAGE_RECEIVED, async msg => {
 
     return client;
 }
+
+
+app.get('/getQRCode', (req, res) => {
+    // Set the path to your QRCode.pdf
+    const filePath = path.join(__dirname, 'QRCode.pdf');
+
+    // Check if file exists (you can use the fs module)
+    fs.access(filePath, fs.constants.F_OK, (err) => {
+        if (err) {
+            return res.status(404).send('QRCode not generated yet.');
+        }
+
+        // Set headers and download
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', 'inline; filename=QRCode.pdf');
+        return res.download(filePath);
+    });
+});
+
+const PORT = 3004;
+app.listen(PORT, () => {
+    console.log(`Server started on http://localhost:${PORT}`);
+});
+
 
 module.exports = {
     initializeWhatsAppClient

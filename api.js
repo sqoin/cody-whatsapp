@@ -1,5 +1,5 @@
 const fetch = require('node-fetch');
-const { BASE_URL, ACCESS_TOKEN } = require('./config.js');
+const { BASE_URL_GETCODY, ACCESS_TOKEN } = require('./config.js');
 
 async function apiCall(endpoint, method = 'GET', body = null) {
     const options = {
@@ -14,7 +14,7 @@ async function apiCall(endpoint, method = 'GET', body = null) {
         options.body = JSON.stringify(body);
     }
 
-    const response = await fetch(`${BASE_URL}/${endpoint}`, options);
+    const response = await fetch(`${BASE_URL_GETCODY}/${endpoint}`, options);
 
     if (!response.ok) {
         throw new Error(`API responded with ${response.status}: ${response.statusText} for endpoint: ${endpoint}`);

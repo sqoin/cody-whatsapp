@@ -1,7 +1,7 @@
 const { Client, Events, LocalAuth } = require('whatsapp-web.js');
 const qrcode = require("qrcode");
 const { sendMessageToCody, fetchConversationsForBot, createConversation } = require('./api.js');
-const { BOT_ID , PORT } = require('./config.js');
+const { GETCODY_BOT_ID , PORT } = require('./config.js');
 const PDFDocument = require('pdfkit');
 const fs = require('fs');
 const express = require('express');
@@ -103,7 +103,7 @@ function initializeWhatsAppClient() {
             activeChats[phoneNumber].timeout = setTimeout(async () => {
                 const concatenatedMsg = activeChats[phoneNumber].messages.join(' ');
 
-                const botId = BOT_ID;
+                const botId = GETCODY_BOT_ID;
                 // const botId = "WJxboZXNkagw";
                 const existingConversations = await fetchConversationsForBot(botId); // Replace with your actual bot ID
                 let conversationId = existingConversations.find(c => c.name === phoneNumber)?.id;
@@ -126,6 +126,22 @@ function initializeWhatsAppClient() {
         console.error('Error initializing WhatsApp client:', error);
     }
 }
+
+
+
+async function handleUserRequest(userId, userMessage) {
+    const botId = GETCODY_BOT_ID;
+    const existingConversations = await fetchConversationsForBot(botId);
+    let conversationId = existingConversations.find(c => c.name === userId)?.id;
+
+    if (!conversationId) {
+        conversationId = await createConversation(botId, userId);
+    }
+
+    const response = await sendMessageToCody(conversationId, userMessage);
+    return response.data.content;
+}
+
 
 
 // Route to display QR code page
@@ -153,5 +169,6 @@ app.listen(PORT, () => {
 
 
 module.exports = {
-    initializeWhatsAppClient
+    initializeWhatsAppClient,
+    handleUserRequest
 };

@@ -1,5 +1,5 @@
 const BASE_URL_GETCODY = 'https://getcody.ai/api/v1';
-const BASE_URL_LIVECHAT = 'https://app.livechatai.com/api/aibot/reply';
+const BASE_URL_LIVECHAT = 'https://app.livechatai.com/api/aibot';
 const ACCESS_TOKEN = "";
 const GETCODY_BOT_ID  = "";
 const LIVECHAT_BOT_ID= "";

@@ -20,7 +20,8 @@ module.exports = {
     PASSWORD,
     CLUSTER,
     DBNAME,
-    USERNAME
+    USERNAME,
+    PORT
 };
 
 

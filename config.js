@@ -3,7 +3,13 @@ const BASE_URL_LIVECHAT = 'https://app.livechatai.com/api/aibot/reply';
 const ACCESS_TOKEN = "";
 const GETCODY_BOT_ID  = "";
 const LIVECHAT_BOT_ID= "";
+const PASSWORD='';
+const CLUSTER='';
+const DBNAME='';
+const USERNAME ='';
 const PORT = 3004;
+
+
 
 module.exports = {
     BASE_URL_GETCODY,
@@ -11,5 +17,10 @@ module.exports = {
     ACCESS_TOKEN,
     GETCODY_BOT_ID,
     LIVECHAT_BOT_ID,
-    PORT
+    PASSWORD,
+    CLUSTER,
+    DBNAME,
+    USERNAME
 };
+
+
